@@ -13,7 +13,7 @@ class ChromaService:
 
     def init_client(self):
         """初始化 ChromaDB 客户端"""
-        persist_directory = current_app.config.get('CHROMADB_PATH', './chromadb_data')
+        persist_directory = current_app.config.get("CHROMADB_PATH", "./chromadb_data")
 
         # 确保目录存在
         os.makedirs(persist_directory, exist_ok=True)
@@ -21,14 +21,20 @@ class ChromaService:
         self.client = chromadb.PersistentClient(path=persist_directory)
 
         # 获取或创建 collection
-        collection_name = current_app.config.get('CHROMADB_COLLECTION', 'blog_chunks')
+        collection_name = current_app.config.get("CHROMADB_COLLECTION", "blog_chunks")
         self.collection = self.client.get_or_create_collection(
-            name=collection_name,
-            metadata={"hnsw:space": "cosine"}
+            name=collection_name, metadata={"hnsw:space": "cosine"}
         )
 
-    def add_embedding(self, chunk_id: int, embedding: list, post_id: int,
-                      title: str, chunk_text: str, chunk_index: int):
+    def add_embedding(
+        self,
+        chunk_id: int,
+        embedding: list,
+        post_id: int,
+        title: str,
+        chunk_text: str,
+        chunk_index: int,
+    ):
         """
         添加向量到 ChromaDB
 
@@ -50,14 +56,16 @@ class ChromaService:
         self.collection.add(
             ids=[doc_id],
             embeddings=[embedding],
-            metadatas=[{
-                "chunk_id": chunk_id,
-                "post_id": post_id,
-                "title": title,
-                "chunk_text": chunk_text,
-                "chunk_index": chunk_index
-            }],
-            documents=[chunk_text]
+            metadatas=[
+                {
+                    "chunk_id": chunk_id,
+                    "post_id": post_id,
+                    "title": title,
+                    "chunk_text": chunk_text,
+                    "chunk_index": chunk_index,
+                }
+            ],
+            documents=[chunk_text],
         )
 
     def search(self, embedding: list, top_k: int = 10):
@@ -74,21 +82,32 @@ class ChromaService:
         if self.collection is None:
             self.init_client()
 
-        results = self.collection.query(
-            query_embeddings=[embedding],
-            n_results=top_k
-        )
+        results = self.collection.query(query_embeddings=[embedding], n_results=top_k)
 
         # 格式化结果
         formatted_results = []
-        if results['ids'] and results['ids'][0]:
-            for i in range(len(results['ids'][0])):
-                formatted_results.append({
-                    'id': results['ids'][0][i],
-                    'distance': results['distances'][0][i] if 'distances' in results else None,
-                    'metadata': results['metadatas'][0][i] if 'metadatas' in results else None,
-                    'document': results['documents'][0][i] if 'documents' in results else None
-                })
+        if results["ids"] and results["ids"][0]:
+            for i in range(len(results["ids"][0])):
+                formatted_results.append(
+                    {
+                        "id": results["ids"][0][i],
+                        "distance": (
+                            results["distances"][0][i]
+                            if "distances" in results
+                            else None
+                        ),
+                        "metadata": (
+                            results["metadatas"][0][i]
+                            if "metadatas" in results
+                            else None
+                        ),
+                        "document": (
+                            results["documents"][0][i]
+                            if "documents" in results
+                            else None
+                        ),
+                    }
+                )
 
         return formatted_results
 
@@ -103,12 +122,10 @@ class ChromaService:
             self.init_client()
 
         # 查找该文章的所有 chunk
-        results = self.collection.get(
-            where={"post_id": post_id}
-        )
+        results = self.collection.get(where={"post_id": post_id})
 
-        if results['ids']:
-            self.collection.delete(ids=results['ids'])
+        if results["ids"]:
+            self.collection.delete(ids=results["ids"])
 
 
 # 全局单例

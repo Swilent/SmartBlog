@@ -17,11 +17,11 @@ def verify_ip(client_ip: str, whitelist: list) -> bool:
         return True
 
     # 移除 IP 地址可能的端口号
-    if ':' in client_ip and client_ip.count(':') > 1:
+    if ":" in client_ip and client_ip.count(":") > 1:
         # IPv6 地址
         pass
-    elif ':' in client_ip:
-        client_ip = client_ip.split(':')[0]
+    elif ":" in client_ip:
+        client_ip = client_ip.split(":")[0]
 
     # 检查 IP 是否在白名单中
     for allowed_ip in whitelist:
@@ -30,7 +30,7 @@ def verify_ip(client_ip: str, whitelist: list) -> bool:
             continue
 
         # 支持通配符匹配（简单版本）
-        if allowed_ip == '*':
+        if allowed_ip == "*":
             return True
 
         if client_ip == allowed_ip:
@@ -51,7 +51,7 @@ def verify_credentials(username: str, password: str, app) -> bool:
     Returns:
         bool: 是否验证通过
     """
-    correct_username = app.config['ADMIN_USERNAME']
-    correct_password = app.config['ADMIN_PASSWORD']
+    correct_username = app.config["ADMIN_USERNAME"]
+    correct_password = app.config["ADMIN_PASSWORD"]
 
     return username == correct_username and password == correct_password

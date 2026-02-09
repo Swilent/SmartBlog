@@ -20,12 +20,11 @@ def generate_embedding(text: str) -> list:
     """
     try:
         resp = dashscope.TextEmbedding.call(
-            model=current_app.config['EMBEDDING_MODEL'],
-            input=text
+            model=current_app.config["EMBEDDING_MODEL"], input=text
         )
 
         if resp.status_code == 200:
-            embedding = resp['output']['embeddings'][0]['embedding']
+            embedding = resp["output"]["embeddings"][0]["embedding"]
             return embedding
         else:
             raise Exception(f"Embedding API 调用失败: {resp.message}")
@@ -44,7 +43,7 @@ def update_post_embeddings(post_id: int, title: str, content: str):
     3. 生成新的 chunks 和向量
     4. 存入 ChromaDB
     """
-    db_path = current_app.config['DATABASE_PATH']
+    db_path = current_app.config["DATABASE_PATH"]
 
     try:
         # 1. 删除旧的 chunks 和向量
@@ -65,9 +64,9 @@ def update_post_embeddings(post_id: int, title: str, content: str):
 
         # 5. 为每个 chunk 生成向量并存入 ChromaDB
         for chunk_record in chunk_records:
-            chunk_id = chunk_record['id']
-            chunk_text = chunk_record['chunk_text']
-            chunk_index = chunk_record['chunk_index']
+            chunk_id = chunk_record["id"]
+            chunk_text = chunk_record["chunk_text"]
+            chunk_index = chunk_record["chunk_index"]
 
             # 生成向量
             embedding = generate_embedding(chunk_text)
@@ -79,7 +78,7 @@ def update_post_embeddings(post_id: int, title: str, content: str):
                 post_id=post_id,
                 title=title,
                 chunk_text=chunk_text,
-                chunk_index=chunk_index
+                chunk_index=chunk_index,
             )
 
         print(f"文章 {post_id} 的向量更新成功，共 {len(chunks)} 个 chunk")

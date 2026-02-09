@@ -14,12 +14,12 @@ def split_markdown(content: str, title: str = "") -> List[str]:
     chunks = []
 
     # 预处理：统一换行符
-    content = content.replace('\r\n', '\n')
+    content = content.replace("\r\n", "\n")
 
     # 按二级标题分割
     # 使用正则表达式匹配 ## 开头的标题
-    pattern = r'\n## (?=[^\n#])'
-    sections = re.split(pattern, '\n' + content)
+    pattern = r"\n## (?=[^\n#])"
+    sections = re.split(pattern, "\n" + content)
 
     # 第一个section可能是标题前的内容
     for i, section in enumerate(sections):
@@ -27,12 +27,12 @@ def split_markdown(content: str, title: str = "") -> List[str]:
             continue
 
         # 移除开头的换行符
-        section = section.lstrip('\n')
+        section = section.lstrip("\n")
 
         # 检查是否以标题开头（第一个section可能没有标题）
-        lines = section.split('\n', 1)
-        if len(lines) == 2 and section.startswith('##'):
-            heading = lines[0].replace('##', '').strip()
+        lines = section.split("\n", 1)
+        if len(lines) == 2 and section.startswith("##"):
+            heading = lines[0].replace("##", "").strip()
             body = lines[1]
         else:
             heading = ""
@@ -75,7 +75,7 @@ def split_by_sentences(text: str, max_length: int = 512) -> List[str]:
 
     # 按句子分割（中文句号、问号、感叹号，英文句号、问号、感叹号）
     # 使用更细粒度的分割
-    sentences = re.split(r'([。！？.!?])', text)
+    sentences = re.split(r"([。！？.!?])", text)
 
     # 重新组合句子和标点
     for i in range(0, len(sentences) - 1, 2):
