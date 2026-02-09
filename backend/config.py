@@ -49,7 +49,7 @@ class Config:
     LOG_VISITOR_ACCESS = True
 
     @staticmethod
-    def init_app(app):
+    def init_app():
         """初始化应用配置"""
         pass
 
