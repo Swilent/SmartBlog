@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}文章管理 - 博客管理后台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .page-header h2 {
+        color: #a855f7;
+        font-size: 1.8rem;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #333;
+        padding-bottom: 10px;
+    }
+
+    .tab {
+        padding: 10px 20px;
+        background: transparent;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+
+    .tab:hover {
+        background: #252525;
+        color: #e0e0e0;
+    }
+
+    .tab.active {
+        background: #a855f7;
+        color: white;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal {
+        background: #1a1a1a;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        color: #a855f7;
+        font-size: 1.3rem;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        font-size: 1.5rem;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+
+    .modal-close:hover {
+        background: #252525;
+        color: #e0e0e0;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 20px;
+        border-top: 1px solid #333;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .preview-container {
+        background: #252525;
+        border: 1px solid #374151;
+        border-radius: 6px;
+        padding: 20px;
+        margin-top: 15px;
+        min-height: 200px;
+    }
+
+    .preview-container h3 {
+        color: #a855f7;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+    }
+
+    /* Markdown 预览样式 */
+    .markdown-preview {
+        line-height: 1.8;
+    }
+
+    .markdown-preview h1,
+    .markdown-preview h2,
+    .markdown-preview h3 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        color: #e0e0e0;
+    }
+
+    .markdown-preview h1 {
+        font-size: 2rem;
+        border-bottom: 1px solid #333;
+        padding-bottom: 10px;
+    }
+
+    .markdown-preview h2 {
+        font-size: 1.5rem;
+    }
+
+    .markdown-preview p {
+        margin-bottom: 15px;
+    }
+
+    .markdown-preview code {
+        background: #0a0a0a;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #22c55e;
+        font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    .markdown-preview pre {
+        background: #0a0a0a;
+        padding: 15px;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin-bottom: 15px;
+    }
+
+    .markdown-preview pre code {
+        background: none;
+        padding: 0;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<nav class="navbar">
+    <h1>博客管理后台</h1>
+    <div>
+        <span style="color: #9ca3af; margin-right: 15px;">欢迎, 管理员</span>
+        <button id="logout-btn" class="btn btn-secondary btn-sm">退出登录</button>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="tabs">
+        <button class="tab active" data-tab="posts">文章管理</button>
+        <button class="tab" data-tab="visits">访问记录</button>
+    </div>
+
+    <!-- 文章管理标签页 -->
+    <div id="posts-tab">
+        <div class="page-header">
+            <h2>文章列表</h2>
+            <button id="create-post-btn" class="btn btn-primary">+ 新建文章</button>
+        </div>
+
+        <div class="table-container">
+            <div id="posts-loading" class="loading">加载中...</div>
+            <table id="posts-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">ID</th>
+                        <th>标题</th>
+                        <th style="width: 100px;">状态</th>
+                        <th style="width: 180px;">创建时间</th>
+                        <th style="width: 180px;">更新时间</th>
+                        <th style="width: 150px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="posts-tbody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 访问记录标签页 -->
+    <div id="visits-tab" style="display: none;">
+        <div class="page-header">
+            <h2>访问记录</h2>
+            <button id="refresh-visits-btn" class="btn btn-secondary">刷新</button>
+        </div>
+
+        <div class="table-container">
+            <div id="visits-loading" class="loading">加载中...</div>
+            <table id="visits-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">ID</th>
+                        <th style="width: 150px;">IP 地址</th>
+                        <th>访问路径</th>
+                        <th style="width: 180px;">访问时间</th>
+                    </tr>
+                </thead>
+                <tbody id="visits-tbody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 文章编辑模态框 -->
+<div id="post-modal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modal-title">新建文章</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="post-form">
+                <input type="hidden" id="post-id">
+                <div class="form-group">
+                    <label for="post-title">标题</label>
+                    <input type="text" id="post-title" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-status">状态</label>
+                    <select id="post-status" class="form-control">
+                        <option value="published">已发布</option>
+                        <option value="draft">草稿</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-content">内容 (Markdown)</label>
+                    <textarea id="post-content" class="form-control" required></textarea>
+                </div>
+
+                <div class="preview-container">
+                    <h3>预览</h3>
+                    <div id="post-preview" class="markdown-preview"></div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary modal-cancel">取消</button>
+            <button id="save-post-btn" class="btn btn-primary">保存</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/admin/js/app.js"></script>
+{% endblock %}
