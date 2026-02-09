@@ -1,15 +1,13 @@
 from flask import (
     Blueprint,
-    request,
     jsonify,
     render_template,
-    session,
     redirect,
     url_for,
     current_app,
+    session,
+    request,
 )
-from functools import wraps
-from app.models import get_all_posts, get_post, update_post, delete_post
 from app.models import (
     create_post,
     get_visits,
@@ -19,6 +17,8 @@ from app.services.embedding_service import (
     delete_post_embeddings,
 )
 from app.utils.auth import verify_ip, verify_credentials
+from app.models import get_all_posts, get_post, update_post, delete_post
+from functools import wraps
 import traceback
 
 admin_bp = Blueprint("admin", __name__)

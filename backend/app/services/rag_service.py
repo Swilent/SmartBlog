@@ -1,9 +1,7 @@
-import dashscope
-import requests
 from app.services.embedding_service import generate_embedding
 from app.services.chroma_service import chroma_service
 from flask import current_app
-import traceback
+import dashscope, requests, traceback
 
 
 def rerank_results(query: str, candidates: list) -> list:

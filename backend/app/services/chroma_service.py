@@ -1,6 +1,5 @@
-import chromadb
 from flask import current_app
-import os
+import chromadb, os
 
 
 class ChromaService:

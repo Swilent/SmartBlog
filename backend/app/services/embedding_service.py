@@ -1,9 +1,8 @@
-import dashscope
 from app.models import delete_chunks_by_post, create_chunks, get_chunks_by_post
 from app.utils.markdown_splitter import split_markdown
 from app.services.chroma_service import chroma_service
 from flask import current_app
-import traceback
+import dashscope, traceback
 
 
 def generate_embedding(text: str) -> list:

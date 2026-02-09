@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, jsonify, current_app, request
 from app.models import create_post, get_post, get_all_posts
 from app.services.embedding_service import update_post_embeddings
 from app.services.rag_service import rag_query
