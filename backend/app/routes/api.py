@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-from app.models import create_post, get_post, get_all_posts, update_post, delete_post
-from app.models import create_chunks, delete_chunks_by_post, get_chunks_by_post
+from app.models import create_post, get_post, get_all_posts
 from app.services.embedding_service import update_post_embeddings
 from app.services.rag_service import rag_query
 import traceback

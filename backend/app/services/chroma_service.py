@@ -1,5 +1,4 @@
 import chromadb
-from chromadb.config import Settings
 from flask import current_app
 import os
 

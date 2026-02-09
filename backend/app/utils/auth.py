@@ -1,7 +1,3 @@
-from flask import current_app
-from typing import List
-
-
 def verify_ip(client_ip: str, whitelist: list) -> bool:
     """
     验证客户端 IP 是否在白名单中

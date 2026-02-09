@@ -1,8 +1,7 @@
 import re
-from typing import List
 
 
-def split_markdown(content: str, title: str = "") -> List[str]:
+def split_markdown(content: str, title: str = "") -> list[str]:
     """
     将 Markdown 内容分割成语义完整的文本块
 
@@ -66,7 +65,7 @@ def split_markdown(content: str, title: str = "") -> List[str]:
     return chunks
 
 
-def split_by_sentences(text: str, max_length: int = 512) -> List[str]:
+def split_by_sentences(text: str, max_length: int = 512) -> list[str]:
     """
     按句子边界分割文本，确保每块不超过指定长度
     """

@@ -12,9 +12,6 @@ from functools import wraps
 from app.models import get_all_posts, get_post, update_post, delete_post
 from app.models import (
     create_post,
-    create_chunks,
-    delete_chunks_by_post,
-    get_chunks_by_post,
     get_visits,
 )
 from app.services.embedding_service import (
