@@ -1,6 +1,6 @@
 <template>
     <div class="home-view">
-        <h1 style="color: var(--accent-purple); margin-bottom: 30px; font-size: 2rem;">文章列表</h1>
+        <h1 class="page-title">文章列表</h1>
 
         <div v-if="loading" class="loading">
             <div class="loading-spinner"></div>
