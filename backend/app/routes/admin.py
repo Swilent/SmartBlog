@@ -49,7 +49,9 @@ def login():
     """管理员登录页面"""
     # 验证 IP 白名单
     if not verify_ip(request.remote_addr, current_app.config["ADMIN_IP_WHITELIST"]):
-        return jsonify({"error": "访问被拒绝：IP 不在白名单中"}), 403
+        if request.is_json:
+            return jsonify({"error": "访问被拒绝：IP 不在白名单中"}), 403
+        return "<h1>403 - 访问被拒绝</h1><p>IP 不在白名单中</p>", 403
 
     if request.method == "POST":
         data = request.get_json()

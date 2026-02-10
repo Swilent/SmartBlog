@@ -7,7 +7,6 @@ def create_app(config_name="development"):
     """应用工厂函数"""
     app = Flask(__name__)
     app.config.from_object(config[config_name])
-    app.config.from_object(config[config_name])
 
     # 启用 CORS
     CORS(app, resources={r"/api/*": {"origins": "*"}, r"/admin/*": {"origins": "*"}})

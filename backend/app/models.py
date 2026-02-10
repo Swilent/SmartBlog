@@ -104,26 +104,29 @@ def update_post(db_path, post_id, title=None, content=None, status=None):
     with get_db_connection(db_path) as conn:
         cursor = conn.cursor()
 
+        # 使用白名单确保字段名安全
+        allowed_fields = {
+            "title": title,
+            "content": content,
+            "status": status,
+        }
+
         updates = []
         params = []
 
-        if title is not None:
-            updates.append("title = ?")
-            params.append(title)
-        if content is not None:
-            updates.append("content = ?")
-            params.append(content)
-        if status is not None:
-            updates.append("status = ?")
-            params.append(status)
+        for field, value in allowed_fields.items():
+            if value is not None:
+                updates.append(f"{field} = ?")
+                params.append(value)
 
-        updates.append("updated_at = ?")
-        params.append(datetime.now().isoformat())
-        params.append(post_id)
+        if updates:
+            updates.append("updated_at = ?")
+            params.append(datetime.now().isoformat())
+            params.append(post_id)
 
-        query = f"UPDATE posts SET {', '.join(updates)} WHERE id = ?"
-        cursor.execute(query, params)
-        conn.commit()
+            query = f"UPDATE posts SET {', '.join(updates)} WHERE id = ?"
+            cursor.execute(query, params)
+            conn.commit()
 
 
 def delete_post(db_path, post_id):

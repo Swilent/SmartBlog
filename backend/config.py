@@ -9,7 +9,7 @@ class Config:
     """应用配置类"""
 
     # Flask 配置
-    SECRET_KEY = os.getenv("SECRET_KEY")
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
     DEBUG = os.getenv("DEBUG") == "True"
 
     # 数据库配置
@@ -43,10 +43,11 @@ class Config:
 
     # IP 白名单配置（逗号分隔的字符串）
     # 例如: "127.0.0.1,192.168.1.100"
-    ADMIN_IP_WHITELIST = os.getenv("ADMIN_IP_WHITELIST").split(",")
+    ADMIN_IP_WHITELIST = os.getenv("ADMIN_IP_WHITELIST", "*").split(",")
 
     # 访客日志配置
     LOG_VISITOR_ACCESS = True
+    LOG_VISITOR_PATHS = ["/", "/articles", "/about"]
 
     @staticmethod
     def init_app():

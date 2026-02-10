@@ -13,7 +13,6 @@ def posts():
     db_path = current_app.config["DATABASE_PATH"]
 
     if request.method == "GET":
-        """获取已发布的文章列表"""
         posts = get_all_posts(db_path, status="published")
         return jsonify(
             {
@@ -35,7 +34,6 @@ def posts():
         )
 
     elif request.method == "POST":
-        """创建新文章（内部使用，需要管理员权限）"""
         data = request.get_json()
         title = data.get("title")
         content = data.get("content")

@@ -16,6 +16,7 @@ def log_visitor():
         return
 
     # 只记录页面访问
-    if request.path in ["/", "/articles", "/about"] or request.path.startswith("/api"):
+    tracked_paths = current_app.config.get("LOG_VISITOR_PATHS", [])
+    if request.path in tracked_paths or request.path.startswith("/api"):
         db_path = current_app.config["DATABASE_PATH"]
         log_visit(db_path, request.remote_addr, request.path)
