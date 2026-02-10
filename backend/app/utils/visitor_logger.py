@@ -15,6 +15,10 @@ def log_visitor():
     if request.path.startswith("/static"):
         return
 
+    # 跳过 CORS 预检请求
+    if request.method == "OPTIONS":
+        return
+
     # 只记录页面访问
     tracked_paths = current_app.config.get("LOG_VISITOR_PATHS", [])
     if request.path in tracked_paths or request.path.startswith("/api"):
