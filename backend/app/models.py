@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from contextlib import contextmanager
 import sqlite3
 
@@ -182,11 +182,25 @@ def get_chunk_by_id(db_path, chunk_id):
 
 
 def log_visit(db_path, ip, path):
-    """记录访客访问"""
+    """记录访客访问，同一IP半小时内重复访问不记录"""
     with get_db_connection(db_path) as conn:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO visits (ip, path) VALUES (?, ?)", (ip, path))
-        conn.commit()
+
+        # 检查该IP在半小时内是否已经访问过
+        thirty_minutes_ago = datetime.now() - timedelta(minutes=30)
+        cursor.execute(
+            """
+            SELECT COUNT(*) as count FROM visits
+            WHERE ip = ? AND visited_at > ?
+            """,
+            (ip, thirty_minutes_ago.isoformat()),
+        )
+        result = cursor.fetchone()
+
+        # 如果半小时内没有访问记录，则插入新记录
+        if result["count"] == 0:
+            cursor.execute("INSERT INTO visits (ip, path) VALUES (?, ?)", (ip, path))
+            conn.commit()
 
 
 def get_visits(db_path, limit=100):
