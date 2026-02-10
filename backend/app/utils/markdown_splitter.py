@@ -21,7 +21,7 @@ def split_markdown(content: str, title: str = "") -> list[str]:
     sections = re.split(pattern, "\n" + content)
 
     # 第一个section可能是标题前的内容
-    for section in enumerate(sections):
+    for section in sections:
         if not section.strip():
             continue
 
