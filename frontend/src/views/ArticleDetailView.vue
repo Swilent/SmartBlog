@@ -23,13 +23,9 @@
         </article>
 
         <!-- 回到顶部按钮 -->
-        <button
-            v-show="showBackToTop"
-            @click="scrollToTop"
-            class="back-to-top"
-            :class="{ 'visible': showBackToTop }"
-        >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <button v-show="showBackToTop" @click="scrollToTop" class="back-to-top" :class="{ 'visible': showBackToTop }">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="18 15 12 9 6 15"></polyline>
             </svg>
         </button>
@@ -56,11 +52,11 @@ const error = computed(() => articleStore.error)
 
 // 配置 marked
 marked.setOptions({
-    highlight: function(code, lang) {
+    highlight: function (code, lang) {
         if (lang && hljs.getLanguage(lang)) {
             try {
                 return hljs.highlight(code, { language: lang }).value
-            } catch (err) {}
+            } catch (err) { }
         }
         return hljs.highlightAuto(code).value
     },

@@ -247,6 +247,7 @@ html {
     margin-bottom: 18px;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -578,6 +579,7 @@ html {
 
     .article-card-excerpt {
         -webkit-line-clamp: 2;
+        line-clamp: 2;
     }
 
     .article-detail {

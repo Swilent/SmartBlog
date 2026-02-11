@@ -18,12 +18,7 @@
         </div>
 
         <div v-else class="article-list">
-            <div
-                v-for="article in articles"
-                :key="article.id"
-                class="article-card"
-                @click="goToArticle(article.id)"
-            >
+            <div v-for="article in articles" :key="article.id" class="article-card" @click="goToArticle(article.id)">
                 <h2 class="article-card-title">{{ article.title }}</h2>
                 <p class="article-card-excerpt">{{ article.content }}</p>
                 <div class="article-card-meta">

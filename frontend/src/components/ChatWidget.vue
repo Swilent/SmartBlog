@@ -1,12 +1,9 @@
 <template>
     <div class="chat-widget">
         <!-- 悬浮按钮 -->
-        <button
-            class="chat-toggle-button"
-            @click="toggleChat"
-            :class="{ 'active': isOpen }"
-        >
-            <svg v-if="!isOpen" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="chat-toggle-button" @click="toggleChat" :class="{ 'active': isOpen }">
+            <svg v-if="!isOpen" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
             <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -23,12 +20,7 @@
             </div>
 
             <div class="chat-messages" ref="messagesContainer">
-                <div
-                    v-for="(message, index) in messages"
-                    :key="index"
-                    class="message"
-                    :class="message.role"
-                >
+                <div v-for="(message, index) in messages" :key="index" class="message" :class="message.role">
                     <div class="message-content">
                         <div class="message-text" v-html="formatMessage(message.content)"></div>
                         <div class="message-time">{{ formatTime(message.timestamp) }}</div>
@@ -47,20 +39,10 @@
             </div>
 
             <div class="chat-input-container">
-                <textarea
-                    v-model="inputMessage"
-                    class="chat-input"
-                    placeholder="问我任何关于博客内容的问题..."
-                    rows="1"
-                    @keydown.enter.exact.prevent="sendMessage"
-                    @input="adjustTextareaHeight"
-                    ref="inputTextarea"
-                ></textarea>
-                <button
-                    class="send-button"
-                    @click="sendMessage"
-                    :disabled="!inputMessage.trim() || isTyping"
-                >
+                <textarea v-model="inputMessage" class="chat-input" placeholder="问我任何关于博客内容的问题..." rows="1"
+                    @keydown.enter.exact.prevent="sendMessage" @input="adjustTextareaHeight"
+                    ref="inputTextarea"></textarea>
+                <button class="send-button" @click="sendMessage" :disabled="!inputMessage.trim() || isTyping">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="22" y1="2" x2="11" y2="13"></line>
                         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -310,6 +292,7 @@ function formatMessage(content) {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -405,10 +388,14 @@ function formatMessage(content) {
 }
 
 @keyframes typing {
-    0%, 60%, 100% {
+
+    0%,
+    60%,
+    100% {
         transform: translateY(0);
         opacity: 0.6;
     }
+
     30% {
         transform: translateY(-12px);
         opacity: 1;
