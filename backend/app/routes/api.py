@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, current_app, request
-from app.models import create_post, get_post, get_all_posts
+from app.models import create_post, get_post, get_all_posts, log_visit
 from app.services.embedding_service import update_post_embeddings
 from app.services.rag_service import rag_query
 import traceback
@@ -94,3 +94,34 @@ def rag_query_endpoint():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": f"问答服务暂时不可用: {str(e)}"}), 500
+
+
+@api_bp.route("/visitor/track", methods=["POST"])
+def track_visitor():
+    """访客追踪接口，供前端在路由变化时调用"""
+    if not current_app.config.get("LOG_VISITOR_ACCESS", True):
+        return jsonify({"tracked": False, "reason": "访客追踪未启用"}), 200
+
+    data = request.get_json()
+    path = data.get("path")
+
+    if not path:
+        return jsonify({"error": "path 参数不能为空"}), 400
+
+    # 检查是否在需要记录的路径列表中
+    log_visitor_paths = current_app.config.get("LOG_VISITOR_PATHS", [])
+
+    # 如果配置了路径白名单，则只记录白名单中的路径
+    if log_visitor_paths:
+        # 支持精确匹配和前缀匹配（如 /article/:id）
+        should_log = any(
+            path == logged_path or path.startswith(logged_path.rstrip("/"))
+            for logged_path in log_visitor_paths
+        )
+        if not should_log:
+            return jsonify({"tracked": False, "reason": "路径不在追踪列表中"}), 200
+
+    db_path = current_app.config["DATABASE_PATH"]
+    log_visit(db_path, request.remote_addr, path)
+
+    return jsonify({"tracked": True}), 201

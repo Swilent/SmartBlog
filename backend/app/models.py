@@ -186,20 +186,28 @@ def log_visit(db_path, ip, path):
     with get_db_connection(db_path) as conn:
         cursor = conn.cursor()
 
+        # 使用与 SQLite CURRENT_TIMESTAMP 一致的格式
+        now = datetime.now()
+        now_str = now.strftime("%Y-%m-%d %H:%M:%S")
+        thirty_minutes_ago = now - timedelta(minutes=30)
+        thirty_minutes_ago_str = thirty_minutes_ago.strftime("%Y-%m-%d %H:%M:%S")
+
         # 检查该IP在半小时内是否已经访问过
-        thirty_minutes_ago = datetime.now() - timedelta(minutes=30)
         cursor.execute(
             """
             SELECT COUNT(*) as count FROM visits
             WHERE ip = ? AND visited_at > ?
             """,
-            (ip, thirty_minutes_ago.isoformat()),
+            (ip, thirty_minutes_ago_str),
         )
         result = cursor.fetchone()
 
         # 如果半小时内没有访问记录，则插入新记录
         if result["count"] == 0:
-            cursor.execute("INSERT INTO visits (ip, path) VALUES (?, ?)", (ip, path))
+            cursor.execute(
+                "INSERT INTO visits (ip, path, visited_at) VALUES (?, ?, ?)",
+                (ip, path, now_str)
+            )
             conn.commit()
 
 
